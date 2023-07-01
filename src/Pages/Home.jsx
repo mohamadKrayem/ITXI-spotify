@@ -4,29 +4,27 @@ import axios from "axios";
 import Card from "../Components/CardComponent";
 import Sprint from "../Components/SprintComponent";
 
-function Home() {
-  const [accessToken, setAccessToken] = useState("");
+function Home({ accessToken }) {
   const [artists, setArtists] = useState([]);
   const [waiting, setWaiting] = useState(false);
+  const [queryParams, setQueryParams] = useSearchParams();
 
-  async function getAccessToken(body) {
-    if (accessToken !== "") return;
-    await axios
-      .post("https://accounts.spotify.com/api/token", body, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      })
-      .then((data) => {
-        console.log(data);
-        setAccessToken(data.data.access_token);
-        localStorage.setItem("access_token", data.data.access_token);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        throw error;
-      });
-  }
+  useEffect(() => {
+    if (localStorage.getItem("access_token")) {
+      (async function () {
+        await getProfile();
+      })();
+    } else console.log("no access token");
+
+    return () => {};
+  }, [accessToken]);
+
+  const [queryStrings, setQueryStrings] = useState({
+    q: "",
+    type: "artist",
+    //  limit: 10,
+    //  offset: 0,
+  });
 
   async function getProfile() {
     await axios
@@ -42,49 +40,6 @@ function Home() {
         console.error("Error:", error);
       });
   }
-
-  useEffect(() => {
-    if (
-      localStorage.getItem("code_verifier") != null &&
-      localStorage.getItem("access_token") === null
-    ) {
-      let codeVerifier = localStorage.getItem("code_verifier");
-      const urlParams = new URLSearchParams(window.location.search);
-      let body = new URLSearchParams({
-        grant_type: "authorization_code",
-        code: urlParams.get("code"),
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-        code_verifier: codeVerifier,
-        client_id: import.meta.env.VITE_CLIENT_ID,
-      });
-
-      console.log(body.toString());
-
-      window.history.replaceState({}, document.title, "/");
-      if (urlParams.get("code") === null) return;
-      (async function (body) {
-        await getAccessToken(body);
-      })(body);
-    }
-    return () => {};
-  }, [accessToken]);
-
-  useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      (async function () {
-        await getProfile();
-      })();
-    } else console.log("no access token");
-
-    return () => {};
-  }, [accessToken]);
-
-  const [queryStrings, setQueryStrings] = useState({
-    q: "",
-    type: "artist",
-    limit: 10,
-    offset: 0,
-  });
 
   useEffect(() => {
     if (
@@ -121,52 +76,53 @@ function Home() {
   }
 
   useEffect(() => {
-    const cancelToken = axios.CancelToken;
-    const source = cancelToken.source();
     const timer = setTimeout(() => {
       if (queryStrings.q !== "") {
         setWaiting(true);
-        searchArtists(queryStrings, source.token);
-      }
+        setQueryParams(queryStrings);
+      } 
     }, 300);
     return () => {
       clearTimeout(timer);
-      source.cancel();
     };
-  }, [queryStrings.q, queryStrings.offset]);
+  }, [queryStrings.q]);
 
   useEffect(() => {
-    if (localStorage.getItem("previous-search") !== null) {
-      const query = new URLSearchParams(
-        localStorage.getItem("previous-search")
-      );
-      setQueryStrings({
-        q: query.get("q"),
-        type: query.get("type"),
-        limit: query.get("limit"),
-        offset: query.get("offset"),
-      });
+    const cancelToken = axios.CancelToken;
+    const source = cancelToken.source();
+    if (queryParams.get("q") === "null") {
+      console.log("nulll")
+      return setArtists([]);
     }
-  }, []);
+    const data = {
+      q: queryParams.get("q"),
+      type: queryParams.get("type"),
+    };
+    if (queryParams.get("q") !== "") {
+      setWaiting(true);
+      searchArtists(data, source.token);
+    }
+    return () => {
+      source.cancel();
+    };
+  }, [queryParams]);
+
 
   return (
-    <>
-      <div className="flex flex-row justify-center items-center p-4">
+    <div className="w-full flex flex-col justify-center items-center">
+      <div className="flex flex-row justify-center items-center p-2 w-full">
         <input
-          className="m-2 p-2 border-2 border-gray-300 rounded-lg lg:w-1/4 sm:2/4 text-center focus:outline-none 
-        focus:ring-2 focus:ring-green-600 focus:border-transparent transition-all duration-500 ease-in-out
-         hover:border-green-600 hover:ring-2 hover:ring-green-600 hover:border-transparent 
-         h-10 text-lg font-semibold text-gray-600 placeholder-gray-400 focus:w-1/3 
-         focus:text-gray-700 focus:shadow-md focus:ring-offset-2
-         focus:ring-opacity-50 focus:h-13
-        "
+          className="m-2 mb-4 p-2 border-2 border-gray-300 rounded-lg text-center focus:outline-none focus:border-gray-700
+          lg:w-2/4 sm:w-2/3 sm2:w-1/2 text-lg font-semibold text-gray-600 placeholder-gray-400 focus:text-gray-700 focus:shadow-md focus:ring-offset-2
+        transition-all duration-500 ease-in-out
+      "
           placeholder="Search for an artist..."
           type="search"
           name="search"
           id="search"
           value={queryStrings.q}
           onChange={(e) => {
-            setQueryStrings({ ...queryStrings, q: e.target.value });
+            setQueryStrings({ type:"artist", q: e.target.value });
           }}
         />
       </div>
@@ -174,14 +130,10 @@ function Home() {
       {waiting ? (
         <Sprint />
       ) : (
-        <div
-          className="
-        container w-screen grid smm:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 pt-6 
-        xl:gap-5 gap-4 sm:ml-auto smm:mx-auto
-        "
-        >
-          {artists.map((artist) => {
-            return (
+        //   <div className="grid grid-cols-1 w-10/12 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 justify-center items-center">
+        <div className="container mx-0 sm2:mx-auto py-8 sm2:px-8 flex flex-col justify-center items-between gap-4">
+          <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 sm:gap-x-6 gap-y-10">
+            {artists.map((artist) => (
               <>
                 {artist.images.length === 0 ? (
                   <Card
@@ -190,6 +142,8 @@ function Home() {
                     followers={
                       artist.followers.total ? artist.followers.total : 0
                     }
+                    id={artist.id}
+                    popularity={artist.popularity ? artist.popularity / 20 : 0}
                   />
                 ) : (
                   <Card
@@ -199,14 +153,16 @@ function Home() {
                     }
                     name={artist.name}
                     key={artist.id}
+                    id={artist.id}
+                    popularity={artist.popularity ? artist.popularity / 20 : 0}
                   />
                 )}
               </>
-            );
-          })}
+            ))}
+          </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
