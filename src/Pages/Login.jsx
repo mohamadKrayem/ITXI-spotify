@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react";
 import { BsSpotify } from "react-icons/bs";
 
-
 function Login() {
   const [randomString, setRandomString] = useState("");
   const [Profile, setProfile] = useState({});
+
+  useEffect(() => {
+    if (localStorage.getItem("access_token") !== null) {
+      window.location.href = "/home";
+    }
+  }, []);
 
   function generateRandomString(length) {
     let text = "";
@@ -60,14 +65,18 @@ function Login() {
         className="
        text-2xl font-sans py-2 h-14 px-4 rounded-lg border-2 border-neutral-300 flex w-1/3 items-center relative
        "
-       onClick={()=> {
-         setRandomString(generateRandomString(127));
-       }}
+        onClick={() => {
+          setRandomString(generateRandomString(127));
+        }}
       >
-         <span className="
+        <span
+          className="
             w-full text-neutral-800 text-center
-         ">Login</span>
-         <BsSpotify className="w-1/6 h-9 text-green-600 absolute right-0" />
+         "
+        >
+          Login
+        </span>
+        <BsSpotify className="w-1/6 h-9 text-green-600 absolute right-0" />
       </button>
     </div>
   );
