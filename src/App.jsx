@@ -1,8 +1,4 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Login from "./Pages/Login";
@@ -31,7 +27,6 @@ function App() {
       });
   }
 
-
   useEffect(() => {
     if (
       localStorage.getItem("code_verifier") != null &&
@@ -51,11 +46,11 @@ function App() {
       console.log(body.toString());
 
       if (urlParams.get("code") === null) return;
-      (async function (body) {
+      (async function(body) {
         await getAccessToken(body);
       })(body);
     }
-    return () => {};
+    return () => { };
   }, [accessToken]);
   return (
     <>
@@ -64,16 +59,16 @@ function App() {
             bg-gray-400 p-3 text-black font-medium sm:pl-16 pl-8
          "
       >
-        <h1 className="text-2xl">Search in spotify</h1>
+        <h1 className="text-2xl">Spotify Artist Search</h1>
       </div>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Home accessToken={accessToken}/>} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Searchbar />} />
-            <Route path="/artist/:id" element={<Artist />} />
-          </Routes>
-        </Router>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home accessToken={accessToken} />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={<Searchbar />} />
+          <Route path="/artist/:id" element={<Artist />} />
+        </Routes>
+      </Router>
     </>
   );
 }
