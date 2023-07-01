@@ -78,6 +78,7 @@ function Artist({ name }) {
                     image={album.images[0].url}
                     tracks={album.total_tracks}
                     date={album.release_date}
+                    url={album.external_urls.spotify}
                   />
                 );
               })}
