@@ -9,16 +9,6 @@ function Home({ accessToken }) {
   const [waiting, setWaiting] = useState(false);
   const [queryParams, setQueryParams] = useSearchParams();
 
-  useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      (async function () {
-        await getProfile();
-      })();
-    } else console.log("no access token");
-
-    return () => {};
-  }, [accessToken]);
-
   const [queryStrings, setQueryStrings] = useState({
     q: "",
     type: "artist",
@@ -26,25 +16,8 @@ function Home({ accessToken }) {
     //  offset: 0,
   });
 
-  async function getProfile() {
-    await axios
-      .get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      })
-      .then((data) => {
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
-
   useEffect(() => {
-    if (
-      localStorage.getItem("access_token") === null 
-    ) {
+    if (localStorage.getItem("access_token") === null) {
       window.location.href = "/login";
     }
   }, []);
@@ -79,7 +52,7 @@ function Home({ accessToken }) {
       if (queryStrings.q !== "") {
         setWaiting(true);
         setQueryParams(queryStrings);
-      } 
+      }
     }, 300);
     return () => {
       clearTimeout(timer);
@@ -90,7 +63,7 @@ function Home({ accessToken }) {
     const cancelToken = axios.CancelToken;
     const source = cancelToken.source();
     if (queryParams.get("q") === "null") {
-      console.log("nulll")
+      console.log("nulll");
       return setArtists([]);
     }
     const data = {
@@ -106,7 +79,6 @@ function Home({ accessToken }) {
     };
   }, [queryParams]);
 
-
   return (
     <div className="w-full flex flex-col justify-center items-center">
       <div className="flex flex-row justify-center items-center p-2 w-full">
@@ -121,7 +93,7 @@ function Home({ accessToken }) {
           id="search"
           value={queryStrings.q}
           onChange={(e) => {
-            setQueryStrings({ type:"artist", q: e.target.value });
+            setQueryStrings({ type: "artist", q: e.target.value });
           }}
         />
       </div>
