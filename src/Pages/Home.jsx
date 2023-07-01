@@ -43,8 +43,7 @@ function Home({ accessToken }) {
 
   useEffect(() => {
     if (
-      localStorage.getItem("access_token") === null &&
-      localStorage.getItem("code_verifier") === null
+      localStorage.getItem("access_token") === null 
     ) {
       window.location.href = "/login";
     }

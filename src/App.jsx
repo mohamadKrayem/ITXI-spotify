@@ -31,32 +31,26 @@ function App() {
       });
   }
 
+  async function getAccessTokenFromTheUrl(hash) {
+      let token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1]
+      setAccessToken(token)
+      window.history.replaceState({}, document.title, "/")
+      window.localStorage.setItem("access_token", token)
+      return token
+   }
+
 
   useEffect(() => {
+      const hash = window.location.hash
     if (
-      localStorage.getItem("code_verifier") != null &&
-      localStorage.getItem("access_token") === null
+      localStorage.getItem("access_token") === null && 
+      hash
     ) {
-      let codeVerifier = localStorage.getItem("code_verifier");
-      const urlParams = new URLSearchParams(window.location.search);
-      window.history.replaceState({}, document.title, "/home");
-      let body = new URLSearchParams({
-        grant_type: "authorization_code",
-        code: urlParams.get("code"),
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
-        code_verifier: codeVerifier,
-        client_id: import.meta.env.VITE_CLIENT_ID,
-      });
-
-      console.log(body.toString());
-
-      if (urlParams.get("code") === null) return;
-      (async function (body) {
-        await getAccessToken(body);
-      })(body);
-    }
+        getAccessTokenFromTheUrl(hash)
+      }
     return () => {};
   }, [accessToken]);
+
   return (
     <>
       <div
@@ -70,7 +64,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home accessToken={accessToken}/>} />
             <Route path="/login" element={<Login />} />
-            <Route path="/home" element={<Searchbar />} />
             <Route path="/artist/:id" element={<Artist />} />
           </Routes>
         </Router>
