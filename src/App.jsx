@@ -1,11 +1,7 @@
-import { Cookies, useCookies } from "react-cookie";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link,
-  useLocation,
-  useNavigate,
 } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -43,6 +39,7 @@ function App() {
     ) {
       let codeVerifier = localStorage.getItem("code_verifier");
       const urlParams = new URLSearchParams(window.location.search);
+      window.history.replaceState({}, document.title, "/home");
       let body = new URLSearchParams({
         grant_type: "authorization_code",
         code: urlParams.get("code"),

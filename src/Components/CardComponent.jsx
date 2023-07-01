@@ -22,12 +22,12 @@ function Card({ imageSrc, name, followers, popularity, id }) {
         }
         alt={name}
       />
-      <div className="p-2 flex flex-col gap-y-7 justify-between">
+      <div className="p-2 flex flex-col gap-y-7 justify-between h-full">
         <div>
           <p className="text-2xl">{name}</p>
           <p className="text-sm">Followers: {followers ? followers : 0}</p>
         </div>
-        <div className="flex flex-row justify-start items-center">
+        <div className="flex flex-row justify-start items-center mb-0">
           {Array.from({ length: 5 }).map((_, i) => {
             let percentage = Math.round(popularity * 2) / 2;
             if (i < percentage) {
