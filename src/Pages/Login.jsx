@@ -45,8 +45,8 @@ function Login() {
         localStorage.setItem("code_verifier", randomString);
         let args = new URLSearchParams({
           response_type: "code",
-          client_id: import.meta.env.VITE_CLIENT_ID,
-          redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+          client_id: "326cbabf1f9e456faf31fc5d4c5bc59e",
+          redirect_uri: "326cbabf1f9e456faf31fc5d4c5bc59e",
           state: generateRandomString(16),
           code_challenge_method: "S256",
           scope: "",

@@ -38,9 +38,9 @@ function App() {
       let body = new URLSearchParams({
         grant_type: "authorization_code",
         code: urlParams.get("code"),
-        redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+        redirect_uri: "http://localhost:5173/",
         code_verifier: codeVerifier,
-        client_id: import.meta.env.VITE_CLIENT_ID,
+        client_id: "326cbabf1f9e456faf31fc5d4c5bc59e",
       });
 
       console.log(body.toString());
