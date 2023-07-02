@@ -26,8 +26,8 @@ function Login() {
     if (randomString !== "") {
         let args = new URLSearchParams({
           response_type: "token",
-          client_id: import.meta.env.VITE_CLIENT_ID,
-          redirect_uri: import.meta.env.VITE_REDIRECT_URI,
+          client_id: "326cbabf1f9e456faf31fc5d4c5bc59e",
+          redirect_uri: "http://localhost:5173/",
           state: generateRandomString(16),
           scope: "",
         });
