@@ -7,7 +7,7 @@ function Login() {
 
   useEffect(() => {
     if (localStorage.getItem("access_token") !== null) {
-      window.location.href = "/home";
+      window.location.href = "/";
     }
   }, []);
 
