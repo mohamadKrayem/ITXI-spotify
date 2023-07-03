@@ -46,7 +46,7 @@ function Login() {
         let args = new URLSearchParams({
           response_type: "code",
           client_id: "326cbabf1f9e456faf31fc5d4c5bc59e",
-          redirect_uri: "326cbabf1f9e456faf31fc5d4c5bc59e",
+          redirect_uri: "http://localhost:5173/",
           state: generateRandomString(16),
           code_challenge_method: "S256",
           scope: "",
@@ -56,7 +56,7 @@ function Login() {
         window.location.href = `https://accounts.spotify.com/authorize?${args}`;
       });
     }
-    return () => {};
+    return () => { };
   }, [randomString]);
 
   return (

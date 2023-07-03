@@ -65,7 +65,6 @@ function App() {
         <Routes>
           <Route path="/" element={<Home accessToken={accessToken} />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/home" element={<Searchbar />} />
           <Route path="/artist/:id" element={<Artist />} />
         </Routes>
       </Router>
