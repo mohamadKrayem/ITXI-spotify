@@ -44,7 +44,7 @@ function App() {
     if (localStorage.getItem("access_token") === null && hash) {
       getAccessTokenFromTheUrl(hash);
     }
-    return () => { };
+    return () => {};
   }, [accessToken]);
 
   return (
