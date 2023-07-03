@@ -17,6 +17,7 @@ function App() {
         },
       })
       .then((data) => {
+        window.history.replaceState({}, document.title, "/");
         console.log(data);
         setAccessToken(data.data.access_token);
         localStorage.setItem("access_token", data.data.access_token);
@@ -46,11 +47,11 @@ function App() {
       console.log(body.toString());
 
       if (urlParams.get("code") === null) return;
-      (async function(body) {
+      (async function (body) {
         await getAccessToken(body);
       })(body);
     }
-    return () => { };
+    return () => {};
   }, [accessToken]);
   return (
     <>
